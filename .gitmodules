@@ -1,0 +1,3 @@
+[submodule "KCFnb"]
+	path = KCFnb
+	url = git://github.com/uoip/KCFnb

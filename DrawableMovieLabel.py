@@ -3,8 +3,9 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from TracksModel import TracksModel
 import cv2
 import pandas as pd
-
-
+import sys
+sys.path.append('KCFnb')
+import kcftracker
 class DrawableMovieLabel(QtWidgets.QLabel):
     progress = QtCore.pyqtSignal([float])
 
@@ -67,12 +68,13 @@ class DrawableMovieLabel(QtWidgets.QLabel):
         rect = (self.x, self.y, x - self.x, y - self.y)
         self.drawRect(self.globalId, rect)
         self.setPixmap(self.pixmap)
-        tracker = cv2.Tracker_create("KCF")
+        tracker = kcftracker.KCFTracker(True, True, True)
+        #tracker = cv2.Tracker_create("KCF")
         rect = (min(rect[0], rect[0]+rect[2]),
                 min(rect[1], rect[1]+rect[3]),
                 abs(rect[2]),
                 abs(rect[3]))
-        tracker.init(self.frame, rect)
+        tracker.init(rect, self.frame)
         self.model.addTrack([self.globalId, rect, tracker])
         self.globalId = self.globalId + 1
 
@@ -126,8 +128,8 @@ class DrawableMovieLabel(QtWidgets.QLabel):
         for (index, track) in enumerate(self.model.tracks):
             tracker = track[2]
             if(tracker is not None):
-                ok, bbox = tracker.update(self.frame)
-                if ok:
+                bbox = tracker.update(self.frame)
+                if 1:
                     self.model.tracks[index][1] = bbox
             else:
                 self.model.removeRow(index)
