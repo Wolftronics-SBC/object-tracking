@@ -34,6 +34,7 @@ class DrawableMovieLabel(QtWidgets.QLabel):
     def openVideo(self, videoAddress):
         self.cap.open(videoAddress)
         self.model.clear()
+        self.annotations = pd.DataFrame()
         self.frameNumber = 0
 
     def mousePressEvent(self, event):
@@ -52,7 +53,7 @@ class DrawableMovieLabel(QtWidgets.QLabel):
 
     def drawRect(self, id, rect):
         self.painter.begin(self.pixmap)
-        self.painter.setPen(QtGui.QPen(QtGui.QColor('#42b9f4'), 3))
+        self.painter.setPen(QtGui.QPen(QtGui.QColor('#c10d4c'), 3))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.painter.setFont(font)
@@ -67,13 +68,17 @@ class DrawableMovieLabel(QtWidgets.QLabel):
         self.drawRect(self.globalId, rect)
         self.setPixmap(self.pixmap)
         tracker = cv2.Tracker_create("KCF")
+        rect = (min(rect[0], rect[0]+rect[2]),
+                min(rect[1], rect[1]+rect[3]),
+                abs(rect[2]),
+                abs(rect[3]))
         tracker.init(self.frame, rect)
         self.model.addTrack([self.globalId, rect, tracker])
         self.globalId = self.globalId + 1
 
     def grabFrame(self):
         self.frameNumber = self.frameNumber+1
-        self.cap.set(cv2.CAP_PROP_POS_FRAMES, self.frameNumber);
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, self.frameNumber)
         ok, self.frame = self.cap.read()
         frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
         image = QtGui.QImage(frame, frame.shape[1], frame.shape[0],
