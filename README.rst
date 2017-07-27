@@ -25,6 +25,14 @@ How to Install (Windows)
     pip install opencv-contrib-python
     conda install pandas
 
+3- Install git and clone the repository
+
+   Go to arbitrary directory and open a gitbash and clone the project
+
+.. code-block::
+
+    git clone https://github.com/alimirzaei/object-tracking --recursive
+
 3- run the applicaion with following command
 
 .. code-block:: python
