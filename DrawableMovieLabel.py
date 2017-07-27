@@ -68,7 +68,7 @@ class DrawableMovieLabel(QtWidgets.QLabel):
         rect = (self.x, self.y, x - self.x, y - self.y)
         self.drawRect(self.globalId, rect)
         self.setPixmap(self.pixmap)
-        tracker = kcftracker.KCFTracker(True, True, True)
+        tracker = kcftracker.KCFTracker(False, True, True)
         #tracker = cv2.Tracker_create("KCF")
         rect = (min(rect[0], rect[0]+rect[2]),
                 min(rect[1], rect[1]+rect[3]),
@@ -89,7 +89,7 @@ class DrawableMovieLabel(QtWidgets.QLabel):
         self.pixmap = QtGui.QPixmap.fromImage(image)
         self.track()
         self.model.filterTracks((self.pixmap.width(), self.pixmap.height()))
-        self.findExistingAnnotations()
+        self.drawExistingAnnotations()
         self.drawExistingRects()
         self.saveTracks()
         p = self.frameNumber*100/self.cap.get(cv2.CAP_PROP_FRAME_COUNT)
@@ -97,6 +97,13 @@ class DrawableMovieLabel(QtWidgets.QLabel):
 
     def seekToPercent(self, percent):
         self.frameNumber = int(percent*int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))/100)
+        self.grabFrame()
+    
+    def nextFrame(self):
+        self.grabFrame()
+    
+    def prviousFrame(self):
+        self.frameNumber = max(self.frameNumber - 2, 0)
         self.grabFrame()
 
     def saveTracks(self):
@@ -110,14 +117,14 @@ class DrawableMovieLabel(QtWidgets.QLabel):
         df['frameNumber'] = self.frameNumber
         self.annotations = pd.concat([self.annotations, df])
 
-    def findExistingAnnotations(self):
-        if(len(self.annotations) == 0):
+    def drawExistingAnnotations(self):
+        if(len(self.annotations) < 2):
             return
         df_tracks = self.annotations[self.annotations['frameNumber'] == self.frameNumber]
         df_ids = df_tracks['id'].values
         df_positions = df_tracks[['x', 'y', 'width', 'height']].values
         for (id, rect) in zip(df_ids, df_positions):
-            self.model.addTrack([id, rect, None])
+            self.drawRect(id, rect)
 
     def drawExistingRects(self):
         for track in self.model.tracks:

@@ -29,9 +29,10 @@ class TracksModel(QtCore.QAbstractListModel):
         return False
 
     def removeRow(self, row):
-        del self.tracks[row]
-        self.dataChanged.emit(self.createIndex(0, 0),
-                              self.createIndex(len(self.tracks)-1, 0))
+        if row>=0 and row<len(self.tracks):
+            del self.tracks[row]
+            self.dataChanged.emit(self.createIndex(0, 0),
+                                  self.createIndex(len(self.tracks)-1, 0))
 
     def flags(self, index):
         flags = super(self.__class__, self).flags(index)

@@ -6,7 +6,7 @@ Created on Thu Jul 20 14:05:43 2017
 @author: ali
 """
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 from DrawableMovieLabel import DrawableMovieLabel
 import pandas as pd
@@ -29,6 +29,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.save_annotations)
         self.ui.pushButton_browse_annotaion.clicked.connect(
                 self.open_annotations)
+        self.ui.pushButton_next.clicked.connect(self.movie.nextFrame)
+        self.ui.pushButton_previous.clicked.connect(self.movie.prviousFrame)
         self.ui.listView.setModel(self.movie.model)
         self.ui.listView.setEditTriggers(
                 QtWidgets.QAbstractItemView.DoubleClicked)
@@ -36,12 +38,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.horizontalSlider.setMaximum(100)
         self.ui.horizontalSlider.valueChanged.connect(self.movie.seekToPercent)
         self.movie.progress.connect(self.ui.horizontalSlider.setValue)
-
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.autoSave)
+        self.timer.start(60*1000)
     def open_annotations(self):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                             'Annotation File')
         self.movie.annotations = pd.read_csv(fileName)
-        self.movie.globalId = self.movie.annotations['id'].max()+1
+        if(len(self.movie.annotations) > 0):
+            self.movie.globalId = self.movie.annotations['id'].max()+1
         self.ui.lineEdit_annotaion.setText(fileName)
 
     def save_annotations(self):
@@ -50,6 +55,9 @@ class MainWindow(QtWidgets.QMainWindow):
                                                             'annotation.csv')
         if(fileName):
             self.movie.annotations.to_csv(fileName)
+
+    def autoSave(self):
+        self.movie.annotations.to_csv('annotations_autosave.csv')
 
     def removeTrack(self):
         row = self.ui.listView.currentIndex().row()
