@@ -33,10 +33,11 @@ How to Install (Windows)
 
     git clone https://github.com/alimirzaei/object-tracking --recursive
 
-3- run the applicaion with following command
+4- Run the applicaion with following command
 
 .. code-block:: python
     
+    cd object-tracking
     python app.py
 If you had any question do not hesitate to contact :)
 
