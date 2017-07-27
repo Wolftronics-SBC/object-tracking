@@ -15,6 +15,8 @@ class TracksModel(QtCore.QAbstractListModel):
     def data(self, index, role=QtCore.Qt.DisplayRole):
         if not index.isValid():
             return None
+        if(index.row()>=len(self.tracks)):
+            print 'NOT'
         track_id = self.tracks[index.row()][0]
         if role == QtCore.Qt.DisplayRole:
             return str(track_id)
@@ -30,9 +32,13 @@ class TracksModel(QtCore.QAbstractListModel):
 
     def removeRow(self, row):
         if row>=0 and row<len(self.tracks):
+            self.beginRemoveRows(QtCore.QModelIndex(),row, row+1)
             del self.tracks[row]
-            self.dataChanged.emit(self.createIndex(0, 0),
-                                  self.createIndex(len(self.tracks)-1, 0))
+            self.endRemoveRows()
+            #self.rowsRemoved.emit(self.createIndex(0, 0),
+            #                      self.createIndex(row, 0))
+        else:
+            print 'can not remove object'
 
     def flags(self, index):
         flags = super(self.__class__, self).flags(index)
@@ -46,10 +52,11 @@ class TracksModel(QtCore.QAbstractListModel):
             if(existing_track[0] == track[0]):
                 self.tracks[index][1] = track[1]
                 return
+        row = len(self.tracks)
+        self.beginInsertRows(QtCore.QModelIndex(),row, row+1)
         self.tracks.append(track)
-        self.dataChanged.emit(self.createIndex(0, 0),
-                              self.createIndex(len(self.tracks) - 1, 0))
-
+        self.endInsertRows()
+        
     def clear(self):
         self.tracks = []
 
