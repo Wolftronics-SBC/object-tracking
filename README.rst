@@ -32,6 +32,41 @@ How to Install (Windows)
     python app.py
 If you had any question do not hesitate to contact :)
 
+How to Install (Linux)
+--------------
+1- Open a terminal (Alt+Ctr+T) install git and clone the project
+
+.. code-block:: 
+    
+    sudo apt-get install git
+    git clone https://github.com/alimirzaei/object-tracking --recursive
+
+2- Install pip and project dependencies
+
+.. code-block:: python
+    
+    sudo apt-get install pip
+    sudo pip install opencv-contrib-python
+    sudo pip install pandas
+    sudo pip install pyqt
+
+2.5- To run your code faster you have to install the c++ compiler and comile some part of code:
+
+.. code-block:: python
+    
+    sudo apt-get install build-essential
+    cd object-tracking/KCFnb
+    python fhog_utils.py
+    
+3- Run the applicaion with following command
+
+.. code-block:: python
+
+    cd object-tracking
+    python app.py
+   
+If you had any question do not hesitate to contact :)
+
 
 Screenshots
 -----------
