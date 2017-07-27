@@ -80,3 +80,4 @@ If you had any question do not hesitate to contact :)
 Screenshots
 -----------
 .. image:: 2017-07-24.png
+.. image:: video.gif
