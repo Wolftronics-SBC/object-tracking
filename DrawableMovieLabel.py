@@ -68,6 +68,8 @@ class DrawableMovieLabel(QtWidgets.QLabel):
         rect = (self.x, self.y, x - self.x, y - self.y)
         self.drawRect(self.globalId, rect)
         self.setPixmap(self.pixmap)
+        if(rect[2]==0 or rect[3]==0):
+            return
         tracker = kcftracker.KCFTracker(False, True, True)
         #tracker = cv2.Tracker_create("KCF")
         rect = (min(rect[0], rect[0]+rect[2]),
