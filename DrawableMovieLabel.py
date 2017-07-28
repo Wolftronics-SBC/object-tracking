@@ -81,9 +81,12 @@ class DrawableMovieLabel(QtWidgets.QLabel):
         self.globalId = self.globalId + 1
 
     def grabFrame(self):
-        self.frameNumber = self.frameNumber+1
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, self.frameNumber)
         ok, self.frame = self.cap.read()
+        if(not ok):
+            print 'can not read frame'
+            return
+        self.frameNumber = self.frameNumber+1
         frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
         image = QtGui.QImage(frame, frame.shape[1], frame.shape[0],
                              frame.strides[0], QtGui.QImage.Format_RGB888)
