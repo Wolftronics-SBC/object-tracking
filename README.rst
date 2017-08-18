@@ -17,21 +17,28 @@ How to Install (Windows)
 
  - Download from here https://repo.continuum.io/archive/Anaconda2-4.4.0-Windows-x86_64.exe
 
-2- Open Anaconda Prompt and Install opencv-contrib and pyqt and pandas
 
-.. code-block:: python
-    
-    conda install pyqt
-    pip install opencv-contrib-python
-    conda install pandas
-
-3- Install git and clone the repository
+2- Install git and clone the repository
 
    Go to arbitrary directory and open a gitbash and clone the project
 
 .. code-block::
 
     git clone https://github.com/alimirzaei/object-tracking --recursive
+
+3- Install project and opencv dependacies
+
+.. code-block::
+    
+    cd object-tracking
+    conda env create --name object-tracking --file requirements.txt
+    chmod +x opencv_dependancies.sh
+    ./opencv_dependancies.sh
+    source activate object-tracking
+
+.. note::
+
+   You have to install opencv compiled with ffmpeg yourself.
 
 4- Run the applicaion with following command
 
