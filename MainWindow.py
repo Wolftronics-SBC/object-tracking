@@ -13,7 +13,8 @@ import pandas as pd
 
 sys.path.append('forms')
 from ui_MainWindow import Ui_MainWindow
-
+from kafka import KafkaProducer
+import json
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -41,6 +42,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.autoSave)
         self.timer.start(60*1000)
+        self.ui.pushButton_kafkaConnect.clicked.connect(self.connectKafka)
+    def connectKafka(self):
+        try:
+            self.movie.kafkaProducer = KafkaProducer(bootstrap_servers=self.ui.lineEdit_kafkaAddress.text())
+        except Exception as e:
+            QtWidgets.QMessageBox.warning(self, "Kafka Connection", "Error in connection" + str(e))
+        else:
+            self.movie.kafkaTopic = self.ui.lineEdit_kafkaTpoic.text()
+            QtWidgets.QMessageBox.information(self, "Kafka Connection", "Successfully Connect")
+
+
+
     def open_annotations(self):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                             'Annotation File')
