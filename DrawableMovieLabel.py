@@ -126,8 +126,9 @@ class DrawableMovieLabel(QtWidgets.QLabel):
         self.annotations = pd.concat([self.annotations, df])
 
         # push to kafka
+	df.set_index('id')
         if(self.kafkaTopic):
-            self.kafkaProducer.send(self.kafkaTopic, df.to_json())
+            self.kafkaProducer.send(self.kafkaTopic, df.reset_index().to_json(orient='records'))
 
     def drawExistingAnnotations(self):
         if(len(self.annotations) < 2):
