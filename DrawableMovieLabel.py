@@ -6,7 +6,7 @@ import pandas as pd
 import sys
 sys.path.append('KCFnb')
 import kcftracker
-
+import time
 class DrawableMovieLabel(QtWidgets.QLabel):
     progress = QtCore.pyqtSignal([float])
 
@@ -124,11 +124,14 @@ class DrawableMovieLabel(QtWidgets.QLabel):
         df['id'] = ids
         df['frameNumber'] = self.frameNumber
         self.annotations = pd.concat([self.annotations, df])
-
+        ts = time.time()
+        df['timestamp'] = ts
         # push to kafka
 	df.set_index('id')
         if(self.kafkaTopic):
-            self.kafkaProducer.send(self.kafkaTopic, df.reset_index().to_json(orient='records'))
+            for index, row in df.iterrows():
+                print(row.to_json())
+                self.kafkaProducer.send(self.kafkaTopic, row.to_json())
 
     def drawExistingAnnotations(self):
         if(len(self.annotations) < 2):
